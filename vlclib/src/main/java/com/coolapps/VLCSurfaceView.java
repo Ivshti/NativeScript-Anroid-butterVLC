@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,7 @@ public class VLCSurfaceView extends SurfaceView implements LibVLC.HardwareAccele
     private int mVideoHeight;
     private int mVideoWidth;
 
-    private LibVLC mLibVLC;
+    private static LibVLC mLibVLC;
     private MediaPlayer mMediaPlayer;
 
     public LibVLC GetLibVLC()
@@ -58,15 +59,19 @@ public class VLCSurfaceView extends SurfaceView implements LibVLC.HardwareAccele
         Intialize();
     }
 
-    private void Intialize()
-    {
-        //mLibVLC = new LibVLC(VLCOptions.getLibOptions(this.getContext(), true, "UTF-8", true, "", true));
+    public static void InitVLC(){
         ArrayList<String> options = new ArrayList<String>();
         //options.add("--subsdec-encoding <encoding>");
         options.add("--aout=opensles");
         options.add("--audio-time-stretch"); // time stretching
         options.add("-vvv"); // verbosity
+
+        //mLibVLC = new LibVLC(VLCOptions.getLibOptions(this.getContext(), true, "UTF-8", true, "", true));
         mLibVLC = new LibVLC(options);
+    }
+
+    private void Intialize()
+    {
         mLibVLC.setOnHardwareAccelerationError(this);
 
         mMediaPlayer = new MediaPlayer(mLibVLC);
@@ -97,6 +102,7 @@ public class VLCSurfaceView extends SurfaceView implements LibVLC.HardwareAccele
 
     @Override
     public void onNewLayout(IVLCVout vout, int width, int height, int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
+        Log.i("onNewLayout", "w: " + width + " h: " + height + " vw: " + visibleWidth + " vh: " + visibleHeight);
         if (width * height == 0)
             return;
 
@@ -154,6 +160,7 @@ public class VLCSurfaceView extends SurfaceView implements LibVLC.HardwareAccele
         ViewGroup rootView = (ViewGroup)this.getParent();
         if(rootView.getClass() == FrameLayout.class)
         {
+            Log.i("setSize", "FrameLayout " + w + " : " + h);
             FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams)this.getLayoutParams();
             lp.width = w;
             lp.height = h;
@@ -162,6 +169,7 @@ public class VLCSurfaceView extends SurfaceView implements LibVLC.HardwareAccele
         else
         if(rootView.getClass() == GridLayout.class)
         {
+            Log.i("setSize", "GridLayout " + w + " : " + h);
             GridLayout.LayoutParams lp = (GridLayout.LayoutParams)this.getLayoutParams();
             lp.width = w;
             lp.height = h;
@@ -170,6 +178,7 @@ public class VLCSurfaceView extends SurfaceView implements LibVLC.HardwareAccele
         else
         if(rootView.getClass() == LinearLayout.class)
         {
+            Log.i("setSize", "LinearLayout " + w + " : " + h);
             LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)this.getLayoutParams();
             lp.width = w;
             lp.height = h;
@@ -178,12 +187,30 @@ public class VLCSurfaceView extends SurfaceView implements LibVLC.HardwareAccele
         else
         if(rootView.getClass() == RelativeLayout.class)
         {
+            Log.i("setSize", "RelativeLayout " + w + " : " + h);
             RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)this.getLayoutParams();
             lp.width = w;
             lp.height = h;
             this.setLayoutParams(lp);
         }
+        else
+        if(rootView.getClass().toString().equals("org.nativescript.widgets.GridLayout"))
+        {
+            Log.i("setSize", "org.nativescript.widgets.GridLayout " + w + " : " + h);
+            GridLayout.LayoutParams lp = (GridLayout.LayoutParams)this.getLayoutParams();
+            lp.width = w;
+            lp.height = h;
+            this.setLayoutParams(lp);
+        }
+
+       /* Log.i("setSize", "org.nativescript.widgets.GridLayout1 " + w + " : " + h);
+        org.nativescript.widgets.CommonLayoutParams lp = (org.nativescript.widgets.CommonLayoutParam)this.getLayoutParams();
+        lp.width = w;
+        lp.height = h;
+        this.setLayoutParams(lp);
+        */
 
         this.invalidate();
+        Log.i("setSize", rootView.getClass().toString());
     }
 }

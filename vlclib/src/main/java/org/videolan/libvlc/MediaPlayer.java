@@ -82,7 +82,7 @@ public class MediaPlayer extends VLCObject<MediaPlayer.Event> {
         }
     }
 
-    public interface EventListener extends VLCEvent.Listener<MediaPlayer.Event> {}
+    //public interface EventListener extends VLCEvent.Listener<MediaPlayer.Event> {}
 
     public static class Position {
         public static final int Disable = -1;
@@ -789,8 +789,8 @@ public class MediaPlayer extends VLCObject<MediaPlayer.Event> {
     public native void setChapter(int chapter);
     public native void navigate(int navigate);
 
-    //public synchronized void setEventListener(VLCEvent.Listener<MediaPlayer.Event> listener) {
-    public synchronized void setEventListener(MediaPlayer.EventListener listener) {
+    public synchronized void setEventListener(VLCEvent.Listener<MediaPlayer.Event> listener) {
+    //public synchronized void setEventListener(MediaPlayer.EventListener listener) {
         super.setEventListener(listener);
     }
 
